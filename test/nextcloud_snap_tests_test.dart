@@ -14,12 +14,13 @@ void main() {
       password: 'admin',
     );
 
-    for (var i = 0; i < 20; i++) {
-      test('upload small files $i', () async {
-        final path = PathUri.parse('$i.bin');
-        final length = i * 1024;
+    for (var kb = 100; kb > 0; kb -= 1) {
+      test('Upload a ${kb}KB file', () async {
+        final path = PathUri.parse('$kb.bin');
+        final length = kb * 1024;
         final data = Uint8List.fromList(
-            List.generate(length, (final index) => random.nextInt(256)));
+          List.generate(length, (_) => random.nextInt(256)),
+        );
 
         final putResponse = await client.webdav.put(
           data,
