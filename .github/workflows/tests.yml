@@ -1,0 +1,39 @@
+name: Run tests
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  run-tests:
+    name: Run Flutter tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies with apt
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev libx11-dev pkg-config cmake ninja-build libblkid-dev snapd
+      
+      - name: Install nextcloud snap
+        run: sudo snap install nextcloud
+      
+      - name: Setup nextcloud
+        run: sudo nextcloud.manual-install admin admin
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+          cache-key: 'flutter-:os:-:channel:-:version:-:arch:'
+
+      - run: flutter pub get
+
+      - run: flutter test
