@@ -36,4 +36,9 @@ jobs:
 
       - run: flutter pub get
 
-      - run: flutter test
+      - id: test
+        run: flutter test
+      
+      - name: Report Nextcloud logs
+        if: failure()
+        run: sudo nextcloud.occ log:tail
